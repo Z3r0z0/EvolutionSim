@@ -30,7 +30,7 @@ class HttpServer(BaseHTTPRequestHandler):
         self.send_header("Content-type", "image/png")
         self.end_headers()
         self.wfile.write(self.create_image().getvalue())
-        self.wfile.write(bytes("<p>Request: %s</p>", self.path, "utf_8"))
+        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
 
     def create_image(self):
         global grid
@@ -39,7 +39,7 @@ class HttpServer(BaseHTTPRequestHandler):
 
         for x in range(450):
             for y in range(600):
-                if data[x][y] != 0:
+                if data[y][x] != 0:
                     array[x][y] = [0, 0, 0]
                 else:
                     array[x][y] = [255, 255, 255]
@@ -49,4 +49,4 @@ class HttpServer(BaseHTTPRequestHandler):
         img = Image.fromarray(array)
         img_byte_arr = io.BytesIO()
         img.save(img_byte_arr, format="PNG")
-        return img-img_byte_arr
+        return img_byte_arr
