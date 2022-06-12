@@ -14,14 +14,14 @@ class HttpServer(BaseHTTPRequestHandler):
 
     # CORS settings
     def end_headers(self):
-        self.send_header("Access-Control_Allow-Origin", "*")
+        self.send_header('Access-Control-Allow-Origin', '*')
         SimpleHTTPRequestHandler.end_headers(self)
 
     def do_GET(self):
         global grid
         if grid is None:
             print(grid is None)
-            print("Creating Grid")
+            print("create Grid")
             grid = Grid(600, 450, 5000, 300)
 
         grid.step()
