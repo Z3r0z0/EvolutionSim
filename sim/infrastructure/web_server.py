@@ -1,8 +1,9 @@
 import io
 from http.server import SimpleHTTPRequestHandler, BaseHTTPRequestHandler
-from infrastructure.grid import Grid
 import numpy as np
 from PIL import Image
+
+from sim.infrastructure.grid import Grid
 
 host_name = "localhost"
 server_port = 8080
@@ -22,7 +23,7 @@ class HttpServer(BaseHTTPRequestHandler):
         if grid is None:
             print(grid is None)
             print("create Grid")
-            grid = Grid(600, 450, 5000, 300)
+            grid = Grid(600, 450, 50, 300)
 
         grid.step()
 

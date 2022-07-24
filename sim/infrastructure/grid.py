@@ -1,6 +1,7 @@
 import random as rand
 import numpy as np
-from infrastructure.node import Node
+
+from sim.infrastructure.node import Node
 
 
 class Grid:
@@ -38,7 +39,7 @@ class Grid:
 
             x, y = self.nodes[i].do_step()
             if x_old != x or y_old != y:
-                self.matrix[x_old][y_old] = 0;
+                self.matrix[x_old][y_old] = 0
                 self.matrix[x][y] = i
 
         return self.matrix

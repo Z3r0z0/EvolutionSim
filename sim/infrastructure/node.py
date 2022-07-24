@@ -1,10 +1,18 @@
 import random
 
+import keras.layers
+import tensorflow as tf
 
 class Node:
     x_pos, y_pos, x_max, y_max = 0, 0, 0, 0
 
+    model = object
     field = object
+
+    INPUT_SIZE = 10
+    OUTPUT_SIZE = 4
+    N_HIDDEN = 64
+    DROPOUT = 0.3
 
     def __init__(self, x, y, x_max, y_max, field):
         self.x_pos = x
@@ -12,6 +20,23 @@ class Node:
         self.x_max = x_max
         self.y_max = y_max
         self.field = field
+        self.init_nn()
+
+    def init_nn(self):
+        self.model = tf.keras.models.Sequential()
+        self.model.add(keras.layers.Dense(self.N_HIDDEN,
+                                          input_shape=(self.INPUT_SIZE,),
+                                          name="dense_input_layer",
+                                          activation="relu"))
+        self.model.add(keras.layers.Dropout(self.DROPOUT))
+        self.model.add(keras.layers.Dense(self.N_HIDDEN,
+                                          name="dense_layer_1",
+                                          activation="relu"))
+        self.model.add(keras.layers.Dropout(self.DROPOUT))
+        self.model.add(keras.layers.Dense(self.OUTPUT_SIZE, name="dense_output_layer"))
+
+        # TODO: other loss function
+        self.model.compile(optimizer="Adam", loss="categorical_crossentropy")
 
     def get_x_pos(self):
         return self.x_pos
@@ -21,6 +46,9 @@ class Node:
 
     def do_step(self):
         # TODO: implement neuronal brain
+
+        # TODO: execute model
+        #temp = self.model()
 
         move = random.randint(0, 4)
 
