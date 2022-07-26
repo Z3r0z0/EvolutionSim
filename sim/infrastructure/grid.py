@@ -7,6 +7,7 @@ from sim.infrastructure.node import Node
 class Grid:
     x_max, y_max = 0, 0
     creatures = 0
+    steps = 0
 
     matrix = [0][0]
     nodes = []
@@ -16,7 +17,7 @@ class Grid:
         self.y_max = y_max
         self.creatures = creature_count
 
-        step_counter = steps
+        self.steps = steps
 
         self.matrix = [[0 for y in range(self.y_max)] for x in range(self.x_max)]
 
@@ -28,7 +29,7 @@ class Grid:
                 y = rand.randint(0, self.y_max - 1)
                 if self.matrix[x][y] == 0:
                     self.matrix[x][y] = i + 1
-                    self.nodes.append(Node(x, y, self.x_max, self.y_max, self.matrix))
+                    self.nodes.append(Node(x, y, self.x_max, self.y_max, self))
                     break
 
     def step(self):
@@ -43,3 +44,9 @@ class Grid:
                 self.matrix[x][y] = i
 
         return self.matrix
+
+    def get_matrix(self):
+        return self.matrix
+
+    def get_steps(self):
+        return self.steps

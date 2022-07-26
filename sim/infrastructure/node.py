@@ -4,12 +4,12 @@ import keras.layers
 import tensorflow as tf
 
 class Node:
-    x_pos, y_pos, x_max, y_max = 0, 0, 0, 0
+    x_pos, y_pos, x_max, y_max, steps = 0, 0, 0, 0, 0
 
     model = object
     field = object
 
-    INPUT_SIZE = 10
+    INPUT_SIZE = 7
     OUTPUT_SIZE = 4
     N_HIDDEN = 64
     DROPOUT = 0.3
@@ -24,7 +24,7 @@ class Node:
 
     def init_nn(self):
         self.model = tf.keras.models.Sequential()
-        self.model.add(keras.layers.Dense(self.N_HIDDEN,
+        self.model.add(keras.layers.Dense(self.INPUT_SIZE,
                                           input_shape=(self.INPUT_SIZE,),
                                           name="dense_input_layer",
                                           activation="relu"))
@@ -47,8 +47,16 @@ class Node:
     def do_step(self):
         # TODO: implement neuronal brain
 
+        temp = self.get_input_data()
+
+        print(temp)
+        print(temp.shape)
+
         # TODO: execute model
-        #temp = self.model()
+        temp_move = self.model.evaluate(temp)
+        #temp_move = self.model(temp)
+
+        print(temp_move)
 
         move = random.randint(0, 4)
 
@@ -65,20 +73,34 @@ class Node:
 
     def move_up(self):
         if self.y_pos < (self.y_max - 1):
-            if self.field[self.x_pos][(self.y_pos + 1)] == 0:
+            if self.field.get_matrix()[self.x_pos][(self.y_pos + 1)] == 0:
                 self.y_pos += 1
 
     def move_down(self):
         if self.y_pos > 0:
-            if self.field[self.x_pos][(self.y_pos - 1)] == 0:
+            if self.field.get_matrix()[self.x_pos][(self.y_pos - 1)] == 0:
                 self.y_pos -= 1
 
     def move_right(self):
         if self.x_pos < (self.x_max - 1):
-            if self.field[(self.x_pos + 1)][self.y_pos] == 0:
+            if self.field.get_matrix()[(self.x_pos + 1)][self.y_pos] == 0:
                 self.x_pos += 1
 
     def move_left(self):
         if self.x_pos > 0:
-            if self.field[(self.x_pos - 1)][self.y_pos] == 0:
+            if self.field.get_matrix()[(self.x_pos - 1)][self.y_pos] == 0:
                 self.x_pos -= 1
+
+    def get_input_data(self):
+        data = tf.constant([
+            self.x_pos,
+            self.y_pos,
+            self.field.get_matrix()[self.x_pos + 1][self.y_pos],
+            self.field.get_matrix()[self.x_pos - 1][self.y_pos],
+            self.field.get_matrix()[self.x_pos][self.y_pos + 1],
+            self.field.get_matrix()[self.x_pos][self.y_pos - 1],
+            self.field.get_steps()
+        ], shape=(7,))
+
+        return data
+
