@@ -50,3 +50,9 @@ class Grid:
 
     def get_steps(self):
         return self.steps
+
+    def get_x_max(self):
+        return self.x_max
+
+    def get_y_max(self):
+        return self.y_max

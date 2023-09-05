@@ -2,6 +2,7 @@ import random
 
 import keras.layers
 import tensorflow as tf
+import numpy as np
 
 class Node:
     x_pos, y_pos, x_max, y_max, steps = 0, 0, 0, 0, 0
@@ -9,8 +10,10 @@ class Node:
     model = object
     field = object
 
-    INPUT_SIZE = 7
-    OUTPUT_SIZE = 4
+    FIELD_BORDER_VALUE = -2
+
+    INPUT_SIZE = 11
+    OUTPUT_SIZE = 2
     N_HIDDEN = 64
     DROPOUT = 0.3
 
@@ -27,6 +30,9 @@ class Node:
         self.model.add(keras.layers.Dense(self.INPUT_SIZE,
                                           input_shape=(self.INPUT_SIZE,),
                                           name="dense_input_layer",
+                                          activation="relu"))
+        self.model.add(keras.layers.Dense(self.N_HIDDEN,
+                                          name="dense_layer_0",
                                           activation="relu"))
         self.model.add(keras.layers.Dropout(self.DROPOUT))
         self.model.add(keras.layers.Dense(self.N_HIDDEN,
@@ -49,16 +55,11 @@ class Node:
 
         temp = self.get_input_data()
 
-        print(temp)
-        print(temp.shape)
+        step = tf.convert_to_tensor([temp], dtype=tf.int32)
 
-        # TODO: execute model
-        temp_move = self.model.evaluate(temp)
-        #temp_move = self.model(temp)
+        temp_move = self.model.predict(step)
 
-        print(temp_move)
-
-        move = random.randint(0, 4)
+        move = random.randint(1, 4)
 
         if move == 0:
             self.move_up()
@@ -92,15 +93,20 @@ class Node:
                 self.x_pos -= 1
 
     def get_input_data(self):
-        data = tf.constant([
-            self.x_pos,
-            self.y_pos,
-            self.field.get_matrix()[self.x_pos + 1][self.y_pos],
-            self.field.get_matrix()[self.x_pos - 1][self.y_pos],
-            self.field.get_matrix()[self.x_pos][self.y_pos + 1],
-            self.field.get_matrix()[self.x_pos][self.y_pos - 1],
-            self.field.get_steps()
-        ], shape=(7,))
+        field_x_max_value = self.field.get_x_max()
+        field_y_max_value = self.field.get_y_max()
+
+        data = np.array([self.x_pos,
+                         self.y_pos,
+                         self.x_pos == field_x_max_value if self.FIELD_BORDER_VALUE else self.field.get_matrix()[self.x_pos + 1][self.y_pos],
+                         self.x_pos == 0 if self.FIELD_BORDER_VALUE else self.field.get_matrix()[self.x_pos - 1][self.y_pos],
+                         self.x_pos == field_y_max_value if self.FIELD_BORDER_VALUE else self.field.get_matrix()[self.x_pos][self.y_pos - 1],
+                         self.x_pos == 0 if self.FIELD_BORDER_VALUE else self.field.get_matrix()[self.x_pos][self.y_pos + 1],
+                         self.field.get_steps(),
+                         0,
+                         field_x_max_value,
+                         0,
+                         field_y_max_value])
 
         return data
 
