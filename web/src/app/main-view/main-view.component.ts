@@ -15,8 +15,8 @@ export class MainViewComponent implements OnInit {
   ngOnInit() {
   }
 
-  dostep(isInit : boolean = false){
-      this.globalService.getImageBlob().subscribe(res => {
+  action(call : string){
+      this.globalService.getImageBlob(call).subscribe(res => {
         let reader = new FileReader();
         reader.addEventListener("load", () => {
           this.image = reader.result;

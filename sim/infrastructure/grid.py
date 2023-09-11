@@ -7,6 +7,8 @@ from sim.infrastructure.node import Node
 class Grid:
     x_max, y_max = 0, 0
     creatures = 0
+
+    steps_init = 0
     steps = 0
 
     matrix = [0][0]
@@ -17,6 +19,7 @@ class Grid:
         self.y_max = y_max
         self.creatures = creature_count
 
+        self.steps_init = steps
         self.steps = steps
 
         self.matrix = [[0 for y in range(self.y_max)] for x in range(self.x_max)]
@@ -24,13 +27,9 @@ class Grid:
         self.matrix = np.array(self.matrix)
 
         for i in range(self.creatures):
-            while 1:
-                x = rand.randint(0, self.x_max - 1)
-                y = rand.randint(0, self.y_max - 1)
-                if self.matrix[x][y] == 0:
-                    self.matrix[x][y] = i + 1
-                    self.nodes.append(Node(x, y, self.x_max, self.y_max, self))
-                    break
+            x, y = self.__get_random_free_location()
+            self.matrix[x][y] = i + 1
+            self.nodes.append(Node(x, y, self.x_max, self.y_max, self))
 
     def step(self):
         for i in range(self.creatures):
@@ -56,3 +55,22 @@ class Grid:
 
     def get_y_max(self):
         return self.y_max
+
+    def train_creatures(self):
+        self.matrix = [[0 for y in range(self.y_max)] for x in range(self.x_max)]
+
+        for i in range(self.creatures):
+            self.nodes[i].train_model()
+
+            x, y = self.__get_random_free_location()
+            self.matrix[x][y] = i + 1
+
+            self.nodes[i].x_pos = x
+            self.nodes[i].y_pos = y
+
+    def __get_random_free_location(self):
+        while 1:
+            x = rand.randint(0, self.x_max - 1)
+            y = rand.randint(0, self.y_max - 1)
+            if self.matrix[x][y] == 0:
+                return x, y

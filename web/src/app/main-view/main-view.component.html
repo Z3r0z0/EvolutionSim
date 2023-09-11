@@ -7,7 +7,15 @@
           <img class="img-fluid border" src={{image}}/>
       </div>
       <div class="col-md-2">
-          <button type="button" class="btn btn-primary"(click)="dostep()">Next-Step</button>
+        <div class="row">
+          <button type="button" class="btn btn-success btn-block"(click)="action('/api/init')">Init</button>
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-primary btn-block"(click)="action('/api/move')">Next Step</button>
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-secondary btn-block"(click)="action('/api/train')">Start Training Arc</button>
+        </div>
       </div>
   </div>
 </div>

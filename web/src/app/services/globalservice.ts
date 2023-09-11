@@ -9,7 +9,7 @@ export class GlobalService {
 
     }
 
-    getImageBlob() {
-        return this.http.get("http://localhost:8080", {responseType: 'blob'});
+    getImageBlob(extension : string) {
+        return this.http.get("http://localhost:8080" + extension, {responseType: 'blob'});
     }
 }

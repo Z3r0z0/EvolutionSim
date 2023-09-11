@@ -20,23 +20,43 @@ class HttpServer(BaseHTTPRequestHandler):
 
     def do_GET(self):
         global grid
-        if grid is None:
-            print(grid is None)
-            print("create Grid")
-            grid = Grid(600, 450, 50, 300)
 
-        grid.step()
+        if self.path == "/api/init":
+            if grid is None:
+                print(grid is None)
+                print("create Grid")
+                grid = Grid(600, 450, 50, 300)
 
-        self.send_response(200)
-        self.send_header("Content-type", "image/png")
-        self.end_headers()
-        self.wfile.write(self.create_image().getvalue())
-        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+            self.send_response(200)
+            self.send_header("Content-type", "image/png")
+            self.end_headers()
+            self.wfile.write(self.create_image().getvalue())
+            self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+        elif self.path == "/api/move":
+            if grid is None:
+                self.send_response(500)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+            else:
+                grid.step()
+                self.send_response(200)
+                self.send_header("Content-type", "image/png")
+                self.end_headers()
+                self.wfile.write(self.create_image().getvalue())
+                self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+        elif self.path == "/api/train":
+            grid.train_creatures()
+            self.send_response(200)
+            self.send_header("Content-type", "image/png")
+            self.end_headers()
+            self.wfile.write(self.create_image().getvalue())
+            self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+
 
     def create_image(self):
-        global grid
         array = np.zeros((450, 600, 3), dtype=np.uint8)
-        data = grid.step()
+        data = grid.matrix
 
         for x in range(450):
             for y in range(600):
