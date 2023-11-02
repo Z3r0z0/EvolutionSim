@@ -52,6 +52,23 @@ class HttpServer(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(self.create_image().getvalue())
             self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+        elif self.path == "/api/full_run":
+            run_count = grid.steps
+
+            for j in range(10):
+                for i in range(run_count):
+                    grid.step()
+                    print(i)
+
+                print("start training")
+                grid.train_creatures()
+
+            self.send_response(200)
+            self.send_header("Content-type", "image/png")
+            self.end_headers()
+            self.wfile.write(self.create_image().getvalue())
+            self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+
 
 
     def create_image(self):

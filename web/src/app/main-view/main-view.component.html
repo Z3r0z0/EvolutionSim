@@ -3,10 +3,10 @@
       SimView
   </h1>
   <div class="row">
-      <div class="col-lg-10">
+      <div class="col-lg-9">
           <img class="img-fluid border" src={{image}}/>
       </div>
-      <div class="col-md-2">
+      <div class="col-md-3">
         <div class="row">
           <button type="button" class="btn btn-success btn-block"(click)="action('/api/init')">Init</button>
         </div>
@@ -15,6 +15,9 @@
         </div>
         <div class="row">
           <button type="button" class="btn btn-secondary btn-block"(click)="action('/api/train')">Start Training Arc</button>
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-primary btn-block" (click)="action('/api/full_run')">Full run</button>
         </div>
       </div>
   </div>

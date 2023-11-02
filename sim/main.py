@@ -1,4 +1,4 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import HTTPServer
 from infrastructure.web_server import HttpServer
 
 if __name__ == "__main__":

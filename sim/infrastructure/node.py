@@ -22,7 +22,7 @@ class Node:
 
     # TODO: relocate
     LOSS_FN = tf.keras.losses.SparseCategoricalCrossentropy()
-    OPTIMIZER = tf.keras.optimizers.Adam(learning_rate=0.001)
+    OPTIMIZER = tf.keras.optimizers.legacy.Adam(learning_rate=0.001)
 
     def __init__(self, x, y, x_max, y_max, field):
         self.x_pos = x
@@ -59,6 +59,7 @@ class Node:
         temp = self.get_input_data()
 
         step = tf.convert_to_tensor([temp], dtype=tf.float32)
+        self.last_step = step
 
         prediction = self.model(step)
         predicted_class = tf.argmax(prediction, axis=-1)
@@ -95,6 +96,7 @@ class Node:
             if self.field.get_matrix()[(self.x_pos - 1)][self.y_pos] == 0:
                 self.x_pos -= 1
 
+    @tf.function
     def get_input_data(self):
         field_x_max_value = self.field.get_x_max() - 1
         field_y_max_value = self.field.get_y_max() - 1
@@ -122,13 +124,30 @@ class Node:
 
         return data
 
+    @tf.function
     def train_model(self):
+
         with tf.GradientTape() as tape:
-            gradients = tape.gradient(self.__get_loss_value(), self.model.trainable_variables)
-            self.OPTIMIZER.apply_gradients(zip(gradients, self.model.trainable_variables))
+            temp = self.get_input_data()
+            test2 = tf.convert_to_tensor([temp], dtype=tf.float32)
+            test = self.model(test2)
+            loss_value = self.get_loss_value(test)
+
+
+
+            # gradients = tape.gradient(self.__get_loss_value(), self.model.trainable_variables)
+            # self.OPTIMIZER.apply_gradients(zip(gradients, self.model.trainable_variables))
+
+        grads = tape.gradient(loss_value, self.model.trainable_weights)
+
+        #optimizer.build(variables)
+
+
+        self.OPTIMIZER.apply_gradients(zip(grads, self.model.trainable_weights))
 
 
     # Demo loss value funktion
-    def __get_loss_value(self):
-        return tf.reduce_mean(tf.square(self.x_pos / self.x_max))
+    @tf.function
+    def get_loss_value(self, test):
+        return tf.square(test * (self.x_pos / self.x_max))
 
